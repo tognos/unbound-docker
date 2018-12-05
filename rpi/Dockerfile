@@ -1,10 +1,10 @@
 FROM arm32v7/debian:stretch as openssl
 LABEL maintainer="Matthew Vance"
 
-ENV VERSION_OPENSSL=openssl-1.1.1a
-ENV SHA256_OPENSSL=fc20130f8b7cbd2fb918b2f14e2f429e109c31ddd0fb38fc5d71d9ffed3f9f41
-ENV SOURCE_OPENSSL=https://www.openssl.org/source/
-ENV OPGP_OPENSSL=8657ABB260F056B1E5190839D9C4D26D0E604491
+ENV VERSION_OPENSSL=openssl-1.1.1a \
+    SHA256_OPENSSL=fc20130f8b7cbd2fb918b2f14e2f429e109c31ddd0fb38fc5d71d9ffed3f9f41 \
+    SOURCE_OPENSSL=https://www.openssl.org/source/ \
+    OPGP_OPENSSL=8657ABB260F056B1E5190839D9C4D26D0E604491
 
 WORKDIR /tmp/src
 
@@ -21,7 +21,9 @@ RUN set -e -x && \
     || gpg --no-tty --keyserver ha.pool.sks-keyservers.net --recv-keys "$OPGP_OPENSSL" ) && \
     gpg --batch --verify openssl.tar.gz.asc openssl.tar.gz && \
     tar xzf openssl.tar.gz && \
-    cd $VERSION_OPENSSL && \
+    cd $VERSION_OPENSSL
+
+RUN cd $VERSION_OPENSSL && \
     ./Configure linux-x32 && \
     ./config --prefix=/opt/openssl no-weak-ssl-ciphers no-ssl3 no-shared -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong && \
     make depend && \
@@ -38,10 +40,10 @@ FROM arm32v7/debian:stretch
 LABEL maintainer="Matthew Vance"
 
 ENV NAME=unbound \
-    UNBOUND_VERSION=1.8.1 \
-    UNBOUND_SHA256=c362b3b9c35d1b8c1918da02cdd5528d729206c14c767add89ae95acae363c5d \
-    UNBOUND_DOWNLOAD_URL=https://www.unbound.net/downloads/unbound-1.8.1.tar.gz \
-    VERSION=0
+    UNBOUND_VERSION=1.8.2 \
+    UNBOUND_SHA256=19f2235a8936d89e7dc919bbfcef355de759f220e36bb5e1e931ac000ed04993 \
+    UNBOUND_DOWNLOAD_URL=https://www.unbound.net/downloads/unbound-1.8.2.tar.gz \
+    VERSION=1
 
 ENV SUMMARY="${NAME} is a validating, recursive, and caching DNS resolver." \
     DESCRIPTION="${NAME} is a validating, recursive, and caching DNS resolver."
@@ -59,11 +61,12 @@ WORKDIR /tmp/src
 
 COPY --from=openssl /opt/openssl /opt/openssl
 
-RUN build_deps="ca-certificates curl gcc libc-dev libevent-dev libexpat1-dev make" && \
+RUN build_deps="curl gcc libc-dev libevent-dev libexpat1-dev make" && \
     set -x && \
     DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
       $build_deps \
       bsdmainutils \
+      ca-certificates \
       ldnsutils \
       libevent-2.0 \
       libexpat1 && \
@@ -71,7 +74,7 @@ RUN build_deps="ca-certificates curl gcc libc-dev libevent-dev libexpat1-dev mak
     echo "${UNBOUND_SHA256} *unbound.tar.gz" | sha256sum -c - && \
     tar xzf unbound.tar.gz && \
     rm -f unbound.tar.gz && \
-    cd unbound-1.8.1 && \
+    cd unbound-1.8.2 && \
     groupadd _unbound && \
     useradd -g _unbound -s /etc -d /dev/null _unbound && \
     ./configure \
