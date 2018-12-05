@@ -1,10 +1,10 @@
 FROM debian:stretch as openssl
 LABEL maintainer="Matthew Vance"
 
-ENV VERSION_OPENSSL=openssl-1.1.1a
-ENV SHA256_OPENSSL=fc20130f8b7cbd2fb918b2f14e2f429e109c31ddd0fb38fc5d71d9ffed3f9f41
-ENV SOURCE_OPENSSL=https://www.openssl.org/source/
-ENV OPGP_OPENSSL=8657ABB260F056B1E5190839D9C4D26D0E604491
+ENV VERSION_OPENSSL=openssl-1.1.1a \
+    SHA256_OPENSSL=fc20130f8b7cbd2fb918b2f14e2f429e109c31ddd0fb38fc5d71d9ffed3f9f41 \
+    SOURCE_OPENSSL=https://www.openssl.org/source/ \
+    OPGP_OPENSSL=8657ABB260F056B1E5190839D9C4D26D0E604491
 
 WORKDIR /tmp/src
 
@@ -39,10 +39,9 @@ LABEL maintainer="Matthew Vance"
 ENV NAME=unbound \
     UNBOUND_VERSION=1.8.1 \
     UNBOUND_SHA256=c362b3b9c35d1b8c1918da02cdd5528d729206c14c767add89ae95acae363c5d \
-    UNBOUND_DOWNLOAD_URL=https://www.unbound.net/downloads/unbound-1.8.1.tar.gz \
-    VERSION=0
-
-ENV SUMMARY="${NAME} is a validating, recursive, and caching DNS resolver." \
+    UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-1.8.1.tar.gz \
+    VERSION=0 \
+    SUMMARY="${NAME} is a validating, recursive, and caching DNS resolver." \
     DESCRIPTION="${NAME} is a validating, recursive, and caching DNS resolver."
 
 LABEL summary="${SUMMARY}" \
@@ -58,11 +57,12 @@ WORKDIR /tmp/src
 
 COPY --from=openssl /opt/openssl /opt/openssl
 
-RUN build_deps="ca-certificates curl gcc libc-dev libevent-dev libexpat1-dev make" && \
+RUN build_deps="curl gcc libc-dev libevent-dev libexpat1-dev make" && \
     set -x && \
     DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
       $build_deps \
       bsdmainutils \
+      ca-certificates \
       ldnsutils \
       libevent-2.0 \
       libexpat1 && \
