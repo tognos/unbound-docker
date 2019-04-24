@@ -317,48 +317,48 @@ server:
     # Include file for local-data and local-data-ptr
     include: /opt/unbound/etc/unbound/a-records.conf
 
-    ###########################################################################
-    # FORWARD ZONE
-    ###########################################################################
-    forward-zone:
-        # Forward all queries (except those in cache and local zone) to
-        # upstream recursive servers
-        name: "."
-        # Queries to this forward zone use TLS
-        forward-tls-upstream: yes
+#   ###########################################################################
+#   # FORWARD ZONE
+#   ###########################################################################
+#   forward-zone:
+#       # Forward all queries (except those in cache and local zone) to
+#       # upstream recursive servers
+#       name: "."
+#       # Queries to this forward zone use TLS
+#       forward-tls-upstream: yes
 
-        # https://dnsprivacy.org/wiki/display/DP/DNS+Privacy+Test+Servers
+#       # https://dnsprivacy.org/wiki/display/DP/DNS+Privacy+Test+Servers
 
-        # Cloudflare
-        forward-addr: 1.1.1.1@853#cloudflare-dns.com
-        forward-addr: 1.0.0.1@853#cloudflare-dns.com
-        #forward-addr: 2606:4700:4700::1111@853#cloudflare-dns.com
-        #forward-addr: 2606:4700:4700::1001@853#cloudflare-dns.com
+#       # Cloudflare
+#       forward-addr: 1.1.1.1@853#cloudflare-dns.com
+#       forward-addr: 1.0.0.1@853#cloudflare-dns.com
+#       #forward-addr: 2606:4700:4700::1111@853#cloudflare-dns.com
+#       #forward-addr: 2606:4700:4700::1001@853#cloudflare-dns.com
 
-        # CleanBrowsing
-        forward-addr: 185.228.168.9@853#security-filter-dns.cleanbrowsing.org
-        forward-addr: 185.228.169.9@853#security-filter-dns.cleanbrowsing.org
-        # forward-addr: 2a0d:2a00:1::2@853#security-filter-dns.cleanbrowsing.org
-        # forward-addr: 2a0d:2a00:2::2@853#security-filter-dns.cleanbrowsing.org
+#       # CleanBrowsing
+#       forward-addr: 185.228.168.9@853#security-filter-dns.cleanbrowsing.org
+#       forward-addr: 185.228.169.9@853#security-filter-dns.cleanbrowsing.org
+#       # forward-addr: 2a0d:2a00:1::2@853#security-filter-dns.cleanbrowsing.org
+#       # forward-addr: 2a0d:2a00:2::2@853#security-filter-dns.cleanbrowsing.org
 
-        # Quad9
-        # forward-addr: 9.9.9.9@853#dns.quad9.net
-        # forward-addr: 149.112.112.112@853#dns.quad9.net
-        # forward-addr: 2620:fe::fe@853#dns.quad9.net
-        # forward-addr: 2620:fe::9@853#dns.quad9.net
+#       # Quad9
+#       # forward-addr: 9.9.9.9@853#dns.quad9.net
+#       # forward-addr: 149.112.112.112@853#dns.quad9.net
+#       # forward-addr: 2620:fe::fe@853#dns.quad9.net
+#       # forward-addr: 2620:fe::9@853#dns.quad9.net
 
-        # getdnsapi.net
-        # forward-addr: 185.49.141.37@853#getdnsapi.net
-        # forward-addr: 2a04:b900:0:100::37@853#getdnsapi.net
+#       # getdnsapi.net
+#       # forward-addr: 185.49.141.37@853#getdnsapi.net
+#       # forward-addr: 2a04:b900:0:100::37@853#getdnsapi.net
 
-        # Surfnet
-        # forward-addr: 145.100.185.15@853#dnsovertls.sinodun.com
-        # forward-addr: 145.100.185.16@853#dnsovertls1.sinodun.com
-        # forward-addr: 2001:610:1:40ba:145:100:185:15@853#dnsovertls.sinodun.com
-        # forward-addr: 2001:610:1:40ba:145:100:185:16@853#dnsovertls1.sinodun.com
+#       # Surfnet
+#       # forward-addr: 145.100.185.15@853#dnsovertls.sinodun.com
+#       # forward-addr: 145.100.185.16@853#dnsovertls1.sinodun.com
+#       # forward-addr: 2001:610:1:40ba:145:100:185:15@853#dnsovertls.sinodun.com
+#       # forward-addr: 2001:610:1:40ba:145:100:185:16@853#dnsovertls1.sinodun.com
 
 remote-control:
-    control-enable: no
+    control-enable: yes
 EOT
 fi
 
@@ -368,5 +368,8 @@ cp -a /dev/random /dev/urandom /opt/unbound/etc/unbound/dev/
 mkdir -p -m 700 /opt/unbound/etc/unbound/var && \
 chown _unbound:_unbound /opt/unbound/etc/unbound/var && \
 /opt/unbound/sbin/unbound-anchor -a /opt/unbound/etc/unbound/var/root.key
+
+/opt/unbound/sbin/unbound-control-setup
+/bin/chown _unbound unbound_control.key unbound_control.pem unbound_server.key unbound_server.pem
 
 exec /opt/unbound/sbin/unbound -d -c /opt/unbound/etc/unbound/unbound.conf

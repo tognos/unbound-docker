@@ -37,9 +37,9 @@ FROM debian:stretch as unbound
 LABEL maintainer="Matthew Vance"
 
 ENV NAME=unbound \
-    UNBOUND_VERSION=1.9.0 \
-    UNBOUND_SHA256=415af94b8392bc6b2c52e44ac8f17935cc6ddf2cc81edfb47c5be4ad205ab917 \
-    UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-1.9.0.tar.gz
+    UNBOUND_VERSION=1.9.1 \
+    UNBOUND_SHA256=c3c0bf9b86ccba4ca64f93dd4fe7351308ab54293f297a67de5a8914c1dc59c5 \
+    UNBOUND_DOWNLOAD_URL=https://nlnetlabs.nl/downloads/unbound/unbound-1.9.1.tar.gz
 
 WORKDIR /tmp/src
 
